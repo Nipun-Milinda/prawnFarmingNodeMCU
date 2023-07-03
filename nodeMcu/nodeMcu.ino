@@ -16,6 +16,27 @@ ESP8266WebServer server(80);
 double ph_value = 13.90;
 double nh3_value = 1.234;
 
+char bioChipStatus ;
+char slakelimeStatus ;
+char sugarStatus ;
+
+void handleUltrasonicStatus(char data){
+  
+  if(data == '1'){
+    char bioChipStatus = '1';
+  }else if(data == '2'){
+    char bioChipStatus = '0';
+  }else if(data == '3'){
+    char slakelimeStatus = '1';
+  }else if(data == '4'){
+    char slakelimeStatus = '0';
+  }else if(data == '5'){
+    char sugarStatus = '1';
+  }else if(data == '6'){
+    char sugarStatus = '0';
+  }
+}
+
 void handleRoot() {
   String html = "<html><body><h1>Prawn Farming Management System</h1></body><html>";
   server.send(200, "text/html", html);
@@ -23,16 +44,39 @@ void handleRoot() {
 
 void handleGETRequest(String call) {
   String ph_string = "";
+  String bioChipStatus_string = "";
+  String sugarStatus_string = "";
+  String slakelimeStatus_string = "";
+
 
   if(WiFi.status() == WL_CONNECTED) {
     WiFiClient client;
     HTTPClient http;
-
+    
+    //ph value
     ph_string =  String(ph_value, 2);
     Serial.println(ph_string);
-    String serverPath = serverName + call + "?ph=" + ph_string;
+    String phServerPath = serverName + call + "?ph=" + ph_string;
 
-    http.begin(client, serverPath.c_str());
+    //bioChipStatus
+    bioChipStatus_string =  String(bioChipStatus);
+    Serial.println(ph_string);
+    String bioChipServerPath = serverName + call + "?ph=" + bioChipStatus_string;
+
+    //slakelime
+    slakelimeStatus_string =  String(slakelimeStatus);
+    Serial.println(ph_string);
+    String slakelimeServerPath = serverName + call + "?ph=" + slakelimeStatus_string;
+
+    //sugar
+    sugarStatus_string =  String(sugarStatus);
+    Serial.println(ph_string);
+    String sugarServerPath = serverName + call + "?ph=" + sugarStatus_string;
+
+    http.begin(client, phServerPath.c_str());
+    http.begin(client, bioChipServerPath.c_str());
+    http.begin(client, slakelimeServerPath.c_str());
+    http.begin(client, sugarServerPath.c_str());
 
     int httpResponseCode = http.GET();
 
@@ -49,6 +93,9 @@ void handleGETRequest(String call) {
     http.end();
 
     server.send(200, "text/plain", ph_string);
+    server.send(200, "text/plain", bioChipStatus_string);
+    server.send(200, "text/plain", slakelimeStatus_string);
+    server.send(200, "text/plain", sugarStatus_string);
 
   } else {
     Serial.println("WiFi disconnected");
@@ -171,6 +218,9 @@ void setup() {
   server.enableCORS(true);
   server.on("/", handleRoot);
   server.on("/checkPH", handleCheckPH);
+  server.on("/bioChipStatus", handleBioChipStatus);
+  server.on("/slakelimeStatus", handleSlakelimeStatus);
+  server.on("/sugarStatus", handleSugarStatus);
   server.on("/startPHTreatLow", handleLowPHTreatment);
   server.on("/startPHTreatHigh", handleHighPHTreatment);
   server.on("/startNH3Treat", handleNH3Treatment);
@@ -198,6 +248,10 @@ void loop() {
   server.handleClient();
 
   if(Serial.available()) {
+    char command = Serial.read();
+    handleUltrasonicStatus(command);
+
     readNH3Value();
+    
    }
 }
