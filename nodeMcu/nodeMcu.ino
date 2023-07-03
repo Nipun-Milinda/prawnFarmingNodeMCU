@@ -107,6 +107,21 @@ void serialComToArduino(String Data){
   delay(3000);
 }
 
+void handleBioChipStatus(){
+  handleGETRequest("biochip-status");
+  Serial.print(4);
+}
+
+void handleSlakelimeStatus(){
+  handleGETRequest("slakelime-status");
+  Serial.print(5);
+}
+
+void handleSugarStatus(){
+  handleGETRequest("sugar-status");
+  Serial.print(6);
+}
+
 void handleCheckPH() {
   handleGETRequest("check-ph");
 }
