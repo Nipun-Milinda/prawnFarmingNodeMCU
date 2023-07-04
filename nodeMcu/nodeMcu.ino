@@ -184,6 +184,7 @@ void handleHarvestingSystem(){
 
 void handleNH3Treatment() {
   // TODO: Treatment functions
+  Serial.print(3);
   if(!waterLevel(D3)){
     while(waterLevel(D3)== false) {
       digitalWrite(D4, LOW);
@@ -195,7 +196,6 @@ void handleNH3Treatment() {
     Serial.println("Tank is full");
   }
 
-  Serial.print(3);
 }
 
 void readNH3Value() {
