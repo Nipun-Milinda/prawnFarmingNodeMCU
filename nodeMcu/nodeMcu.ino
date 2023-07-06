@@ -266,7 +266,7 @@ void loop() {
     char command = Serial.read();
     handleUltrasonicStatus(command);
 
-    readNH3Value();
+    // readNH3Value();
     
    }
 }
