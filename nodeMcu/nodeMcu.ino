@@ -13,7 +13,7 @@ String serverName = "http://192.168.1.154:5000/api/";
 
 ESP8266WebServer server(80);
 
-double ph_value = 13.90;
+double ph_value = 5.90;
 double nh3_value = 1.234;
 
 char bioChipStatus ;
@@ -55,22 +55,22 @@ void handleGETRequest(String call) {
     
     //ph value
     ph_string =  String(ph_value, 2);
-    Serial.println(ph_string);
+    // Serial.println(ph_string);
     String phServerPath = serverName + call + "?ph=" + ph_string;
 
     //bioChipStatus
     bioChipStatus_string =  String(bioChipStatus);
-    Serial.println(ph_string);
+    // Serial.println(ph_string);
     String bioChipServerPath = serverName + call + "?ph=" + bioChipStatus_string;
 
     //slakelime
     slakelimeStatus_string =  String(slakelimeStatus);
-    Serial.println(ph_string);
+    // Serial.println(ph_string);
     String slakelimeServerPath = serverName + call + "?ph=" + slakelimeStatus_string;
 
     //sugar
     sugarStatus_string =  String(sugarStatus);
-    Serial.println(ph_string);
+    // Serial.println(ph_string);
     String sugarServerPath = serverName + call + "?ph=" + sugarStatus_string;
 
     http.begin(client, phServerPath.c_str());
@@ -81,13 +81,13 @@ void handleGETRequest(String call) {
     int httpResponseCode = http.GET();
 
     if(httpResponseCode>0) {
-      Serial.print("HTTP Response code: ");
-      Serial.println(httpResponseCode);
+      // Serial.print("HTTP Response code: ");
+      // Serial.println(httpResponseCode);
       String payload = http.getString();
-      Serial.println(payload);
+      // Serial.println(payload);
     } else {
-      Serial.print("Error code: ");
-      Serial.println(httpResponseCode);
+      // Serial.print("Error code: ");
+      // Serial.println(httpResponseCode);
     }
 
     http.end();
@@ -109,17 +109,17 @@ void serialComToArduino(String Data){
 
 void handleBioChipStatus(){
   handleGETRequest("biochip-status");
-  Serial.print(400);
+  Serial.print(4);
 }
 
 void handleSlakelimeStatus(){
   handleGETRequest("slakelime-status");
-  Serial.print(500);
+  Serial.print(5);
 }
 
 void handleSugarStatus(){
   handleGETRequest("sugar-status");
-  Serial.print(600);
+  Serial.print(6);
 }
 
 void handleCheckPH() {
@@ -129,13 +129,13 @@ void handleCheckPH() {
 void handleLowPHTreatment() {
   handleGETRequest("record-ph");
   // TODO: treatment functions
-  Serial.print(100);
+  Serial.print(1);
 }
 
 void handleHighPHTreatment() {
   handleGETRequest("record-ph");
   // TODO: treatment functions
-  Serial.print(200);
+  Serial.print(2);
 }
 
 // water level sensor function
@@ -184,7 +184,7 @@ void handleHarvestingSystem(){
 
 void handleNH3Treatment() {
   // TODO: Treatment functions
-  Serial.print(300);
+  Serial.print(3);
   if(!waterLevel(D3)){
     while(waterLevel(D3)== false) {
       digitalWrite(D4, LOW);
