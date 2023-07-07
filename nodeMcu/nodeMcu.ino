@@ -109,17 +109,17 @@ void serialComToArduino(String Data){
 
 void handleBioChipStatus(){
   handleGETRequest("biochip-status");
-  Serial.print(4);
+  Serial.print(400);
 }
 
 void handleSlakelimeStatus(){
   handleGETRequest("slakelime-status");
-  Serial.print(5);
+  Serial.print(500);
 }
 
 void handleSugarStatus(){
   handleGETRequest("sugar-status");
-  Serial.print(6);
+  Serial.print(600);
 }
 
 void handleCheckPH() {
@@ -129,13 +129,13 @@ void handleCheckPH() {
 void handleLowPHTreatment() {
   handleGETRequest("record-ph");
   // TODO: treatment functions
-  Serial.print(1);
+  Serial.print(100);
 }
 
 void handleHighPHTreatment() {
   handleGETRequest("record-ph");
   // TODO: treatment functions
-  Serial.print(2);
+  Serial.print(200);
 }
 
 // water level sensor function
@@ -184,7 +184,7 @@ void handleHarvestingSystem(){
 
 void handleNH3Treatment() {
   // TODO: Treatment functions
-  Serial.print(3);
+  Serial.print(300);
   if(!waterLevel(D3)){
     while(waterLevel(D3)== false) {
       digitalWrite(D4, LOW);
