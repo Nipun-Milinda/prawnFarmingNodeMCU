@@ -66,17 +66,17 @@ void handleGETRequest(String call) {
 
     //bioChipStatus
     bioChipStatus_string =  String(bioChipStatus);
-    // Serial.println(ph_string);
+    Serial.println(bioChipStatus_string);
     String bioChipServerPath = serverName + call + "?ph=" + bioChipStatus_string;
 
     //slakelime
     slakelimeStatus_string =  String(slakelimeStatus);
-    // Serial.println(ph_string);
+    Serial.println(slakelimeStatus_string);
     String slakelimeServerPath = serverName + call + "?ph=" + slakelimeStatus_string;
 
     //sugar
     sugarStatus_string =  String(sugarStatus);
-    // Serial.println(ph_string);
+    Serial.println(sugarStatus_string);
     String sugarServerPath = serverName + call + "?ph=" + sugarStatus_string;
 
     http.begin(client, phServerPath.c_str());
