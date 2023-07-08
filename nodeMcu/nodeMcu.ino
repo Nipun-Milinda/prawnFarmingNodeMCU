@@ -22,18 +22,24 @@ char sugarStatus ;
 
 void handleUltrasonicStatus(char data){
   
-  if(data == '1'){
+  if(data == 'a'){
     char bioChipStatus = '1';
-  }else if(data == '2'){
+    Serial.println('a');
+  }else if(data == 'z'){
     char bioChipStatus = '0';
+    Serial.println('z');
   }else if(data == '3'){
     char slakelimeStatus = '1';
+    Serial.println(3);
   }else if(data == '4'){
     char slakelimeStatus = '0';
+    Serial.println(4);
   }else if(data == '5'){
     char sugarStatus = '1';
+    Serial.println(5);
   }else if(data == '6'){
     char sugarStatus = '0';
+    Serial.println(6);
   }
 }
 
