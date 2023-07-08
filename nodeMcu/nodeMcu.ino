@@ -6,7 +6,7 @@
 
 SoftwareSerial s(D9,D10);
 
-//wifi details
+
 const char* ssid = "South Pole";
 const char* password = "214110Gbdnm";
 
