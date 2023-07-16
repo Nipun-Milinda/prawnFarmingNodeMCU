@@ -19,6 +19,7 @@ double nh3_value = 1.234;
 char bioChipStatus ;
 char slakelimeStatus ;
 char sugarStatus ;
+1
 
 void handleUltrasonicStatus(char data){
   
@@ -34,6 +35,16 @@ void handleUltrasonicStatus(char data){
     char sugarStatus = '1';
   }else if(data == '6'){
     char sugarStatus = '0';
+  }else if(data == 'b'){
+    handleWaterIOSystem();
+  }else if(data == 'c'){
+    handleHarvestingSystem();
+  }else if(data == 'd'){
+    if(ph_value<7.5){
+
+    }
+  }else if(data == 'e'){
+    handleNH3Treatment();
   }
 }
 
@@ -217,6 +228,14 @@ void readNH3Value() {
   handleNH3Treatment();
 }
 
+// double calculate_pH()
+// {
+//   pH_Value = analogRead(A0);
+//   Voltage = pH_Value * (5.0 / 1023.0);
+//   double final = 11.07 * Voltage - 33.475;
+//   return final;
+// }
+
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
@@ -256,6 +275,8 @@ void setup() {
   digitalWrite(D5, HIGH); //Trun off relay channel
   digitalWrite(D6, HIGH); //Trun off relay channel
   digitalWrite(D7, HIGH); //Trun off relay channel
+
+  pinMode(pH_Value, INPUT);
 }
 
 void loop() {
