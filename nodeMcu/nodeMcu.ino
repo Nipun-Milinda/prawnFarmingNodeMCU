@@ -2,9 +2,9 @@
 #include <ESP8266HTTPClient.h>
 #include <ESP8266WebServer.h>
 #include <WiFiClient.h>
-#include<SoftwareSerial.h>
+#include <SoftwareSerial.h>
 
-SoftwareSerial s(D9,D10);
+SoftwareSerial s(D9, D10);
 
 const char* ssid = "South Pole";
 const char* password = "214110Gbdnm";
@@ -16,36 +16,63 @@ ESP8266WebServer server(80);
 double ph_value = 13.90;
 double nh3_value = 1.234;
 
-char bioChipStatus ;
-char slakelimeStatus ;
-char sugarStatus ;
-1
+char bioChipStatus;
+char slakelimeStatus;
+char sugarStatus;
 
-void handleUltrasonicStatus(char data){
-  
-  if(data == '1'){
-    char bioChipStatus = '1';
-  }else if(data == '2'){
-    char bioChipStatus = '0';
-  }else if(data == '3'){
-    char slakelimeStatus = '1';
-  }else if(data == '4'){
-    char slakelimeStatus = '0';
-  }else if(data == '5'){
-    char sugarStatus = '1';
-  }else if(data == '6'){
-    char sugarStatus = '0';
-  }else if(data == 'b'){
+void keypadHandler(char data) {
+  if (data == 'a') {
     handleWaterIOSystem();
-  }else if(data == 'c'){
+  } else if (data == 'b') {
     handleHarvestingSystem();
-  }else if(data == 'd'){
-    if(ph_value<7.5){
+  } else if (data == 'c') {
 
+    if (ph_value < 7.5) {
+      Serial.print(5);
+      delay(3000);
+      if(slakelimeStatus == '1'){
+        smallTankInput(1);
+      }
+    }else if(ph_value > 8.5){
+      Serial.print(6);
+      delay(3000);
+      if(sugarStatus == '1'){
+        smallTankInput(2);
+      }
+    }else if(ph_value>7.5 && ph_value<8.5){
+      Serial.print(7);
     }
-  }else if(data == 'e'){
+  } else if (data == 'd') {
     handleNH3Treatment();
   }
+}
+
+void webHandler(char data) {
+  if (data == '1') {
+    char bioChipStatus = '1';
+  } else if (data == '2') {
+    char bioChipStatus = '0';
+  } else if (data == '3') {
+    char slakelimeStatus = '1';
+  } else if (data == '4') {
+    char slakelimeStatus = '0';
+  } else if (data == '5') {
+    char sugarStatus = '1';
+  } else if (data == '6') {
+    char sugarStatus = '0';
+  }
+}
+
+
+void handleSerialData(char data) {
+
+  if (data == '1' || data == '2' || data == '3' || data == '4' || data == '5' || data == '6') {
+    keypadHandler(data);
+  } else if (data == 'a' || data == 'b' || data == 'c' || data == 'd') {
+    webHandler(data);
+  }
+
+  
 }
 
 void handleRoot() {
@@ -60,27 +87,27 @@ void handleGETRequest(String call) {
   String slakelimeStatus_string = "";
 
 
-  if(WiFi.status() == WL_CONNECTED) {
+  if (WiFi.status() == WL_CONNECTED) {
     WiFiClient client;
     HTTPClient http;
-    
+
     //ph value
-    ph_string =  String(ph_value, 2);
+    ph_string = String(ph_value, 2);
     Serial.println(ph_string);
     String phServerPath = serverName + call + "?ph=" + ph_string;
 
     //bioChipStatus
-    bioChipStatus_string =  String(bioChipStatus);
+    bioChipStatus_string = String(bioChipStatus);
     Serial.println(ph_string);
     String bioChipServerPath = serverName + call + "?ph=" + bioChipStatus_string;
 
     //slakelime
-    slakelimeStatus_string =  String(slakelimeStatus);
+    slakelimeStatus_string = String(slakelimeStatus);
     Serial.println(ph_string);
     String slakelimeServerPath = serverName + call + "?ph=" + slakelimeStatus_string;
 
     //sugar
-    sugarStatus_string =  String(sugarStatus);
+    sugarStatus_string = String(sugarStatus);
     Serial.println(ph_string);
     String sugarServerPath = serverName + call + "?ph=" + sugarStatus_string;
 
@@ -91,7 +118,7 @@ void handleGETRequest(String call) {
 
     int httpResponseCode = http.GET();
 
-    if(httpResponseCode>0) {
+    if (httpResponseCode > 0) {
       Serial.print("HTTP Response code: ");
       Serial.println(httpResponseCode);
       String payload = http.getString();
@@ -113,22 +140,22 @@ void handleGETRequest(String call) {
   }
 }
 
-void serialComToArduino(String Data){
+void serialComToArduino(String Data) {
   s.println(Data);
   delay(3000);
 }
 
-void handleBioChipStatus(){
+void handleBioChipStatus() {
   handleGETRequest("biochip-status");
   Serial.print(4);
 }
 
-void handleSlakelimeStatus(){
+void handleSlakelimeStatus() {
   handleGETRequest("slakelime-status");
   Serial.print(5);
 }
 
-void handleSugarStatus(){
+void handleSugarStatus() {
   handleGETRequest("sugar-status");
   Serial.print(6);
 }
@@ -150,37 +177,36 @@ void handleHighPHTreatment() {
 }
 
 // water level sensor function
-bool waterLevel(int pin){
-  if(digitalRead(pin)== LOW){
+bool waterLevel(int pin) {
+  if (digitalRead(pin) == LOW) {
     return true;
-  }
-  else{
+  } else {
     return false;
   }
 }
 
 
-void handleWaterIOSystem(){
+void handleWaterIOSystem() {
   // TODO: Treatment functions
   Serial.println("WaterIO System start!!");
-  if(!waterLevel(D1)){
+  if (!waterLevel(D1)) {
     Serial.println("in if");
-    while(waterLevel(D1)== false) {
+    while (waterLevel(D1) == false) {
       digitalWrite(D5, LOW);
       Serial.println("Water in start");
     }
     digitalWrite(D5, HIGH);
     Serial.println("Water in stop");
-  }else{
+  } else {
     Serial.println("Tank is full");
   }
 }
 
-void handleHarvestingSystem(){
+void handleHarvestingSystem() {
   // TODO: Treatment functions
   Serial.println("Harvesting System start!!");
-  if(waterLevel(D2) == true){
-    while(waterLevel(D2) == true){
+  if (waterLevel(D2) == true) {
+    while (waterLevel(D2) == true) {
       digitalWrite(D6, LOW);
       digitalWrite(D7, LOW);
       Serial.println("solinoid and pump in start");
@@ -188,7 +214,7 @@ void handleHarvestingSystem(){
     digitalWrite(D6, HIGH);
     digitalWrite(D7, HIGH);
     Serial.println("solinoid and pump in stop");
-  }else{
+  } else {
     Serial.println("Tank is Empty");
   }
 }
@@ -196,17 +222,16 @@ void handleHarvestingSystem(){
 void handleNH3Treatment() {
   // TODO: Treatment functions
   Serial.print(3);
-  if(!waterLevel(D3)){
-    while(waterLevel(D3)== false) {
+  if (!waterLevel(D3)) {
+    while (waterLevel(D3) == false) {
       digitalWrite(D4, LOW);
       Serial.println("Water in start");
     }
     digitalWrite(D4, HIGH);
     Serial.println("Water in stop");
-  }else{
+  } else {
     Serial.println("Tank is full");
   }
-
 }
 
 void readNH3Value() {
@@ -217,10 +242,10 @@ void readNH3Value() {
   // Copy the string from the String object to the character array
   inputString.toCharArray(charArray, sizeof(charArray));
 
-  char *token;
+  char* token;
 
   token = strtok(charArray, ",");
-  if(token == "nh3") {
+  if (token == "nh3") {
     token = strtok(NULL, ",");
     nh3_value = atof(token);
   }
@@ -236,12 +261,29 @@ void readNH3Value() {
 //   return final;
 // }
 
+
+void smallTankInput(int data){
+  if (!waterLevel(D1)) {
+    // Serial.println("in if");
+    while (waterLevel(D1) == false) {
+      digitalWrite(D5, LOW);
+      // Serial.println("Water in start");
+    }
+    digitalWrite(D5, HIGH);
+    // Serial.println("Water in stop");
+    Serial.print(data);
+  } else {
+    // Serial.println("Tank is full");
+    Serial.print(data);
+  }
+}
+
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
   // s.begin(9600);
   WiFi.begin(ssid, password);
-  while(WiFi.status() != WL_CONNECTED) {
+  while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print('.');
   }
@@ -263,31 +305,30 @@ void setup() {
   server.begin();
 
   //Sensor Pins
-  pinMode(D1,INPUT_PULLUP); // Top WL Sensor
-  pinMode(D2,INPUT_PULLUP); // Bottom WL Sensor
-  pinMode(D3,INPUT_PULLUP); // Small Tank WL Sensor
-  pinMode(D4, OUTPUT); // Large tank solinoid valve
-  pinMode(D5, OUTPUT); // Small tank solinoid valve
-  pinMode(D6, OUTPUT); // Large tank water out solinoid valve
-  pinMode(D7, OUTPUT); // Large tank water out water pump
+  pinMode(D1, INPUT_PULLUP);  // Top WL Sensor
+  pinMode(D2, INPUT_PULLUP);  // Bottom WL Sensor
+  pinMode(D3, INPUT_PULLUP);  // Small Tank WL Sensor
+  pinMode(D4, OUTPUT);        // Large tank solinoid valve
+  pinMode(D5, OUTPUT);        // Small tank solinoid valve
+  pinMode(D6, OUTPUT);        // Large tank water out solinoid valve
+  pinMode(D7, OUTPUT);        // Large tank water out water pump
 
-  digitalWrite(D4, HIGH); //Trun off relay channel
-  digitalWrite(D5, HIGH); //Trun off relay channel
-  digitalWrite(D6, HIGH); //Trun off relay channel
-  digitalWrite(D7, HIGH); //Trun off relay channel
+  digitalWrite(D4, HIGH);  //Trun off relay channel
+  digitalWrite(D5, HIGH);  //Trun off relay channel
+  digitalWrite(D6, HIGH);  //Trun off relay channel
+  digitalWrite(D7, HIGH);  //Trun off relay channel
 
-  pinMode(pH_Value, INPUT);
+  // pinMode(pH_Value, INPUT);
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
   server.handleClient();
 
-  if(Serial.available()) {
+  if (Serial.available()) {
     char command = Serial.read();
-    handleUltrasonicStatus(command);
+    handleSerialData(command);
 
-    readNH3Value();
-    
-   }
+    // readNH3Value();
+  }
 }
