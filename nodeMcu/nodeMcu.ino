@@ -13,7 +13,7 @@ String serverName = "http://192.168.1.154:5000/api/";
 
 ESP8266WebServer server(80);
 
-double ph_value = 13.90;
+double ph_value = 6.4;
 double nh3_value = 1.234;
 
 char bioChipStatus;
