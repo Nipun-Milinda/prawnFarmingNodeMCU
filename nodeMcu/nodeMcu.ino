@@ -189,13 +189,13 @@ bool waterLevel(int pin) {
 void handleWaterIOSystem() {
   // TODO: Treatment functions
   Serial.println("WaterIO System start!!");
-  if (!waterLevel(D1)) {
+  if (!waterLevel(D2)) {
     Serial.println("in if");
-    while (waterLevel(D1) == false) {
-      digitalWrite(D5, LOW);
+    while (waterLevel(D2) == false) {
+      digitalWrite(D6, LOW);
       Serial.println("Water in start");
     }
-    digitalWrite(D5, HIGH);
+    digitalWrite(D6, HIGH);
     Serial.println("Water in stop");
   } else {
     Serial.println("Tank is full");
@@ -205,20 +205,21 @@ void handleWaterIOSystem() {
 void handleHarvestingSystem() {
   // TODO: Treatment functions
   Serial.println("Harvesting System start!!");
-  if (waterLevel(D2) == true) {
-    while (waterLevel(D2) == true) {
-      digitalWrite(D6, LOW);
-      digitalWrite(D7, LOW);
+  if (waterLevel(D1) == true) {
+    while (waterLevel(D1) == true) {
+      digitalWrite(D4, LOW);
+      digitalWrite(D5, LOW);
       Serial.println("solinoid and pump in start");
     }
-    digitalWrite(D6, HIGH);
-    digitalWrite(D7, HIGH);
+    digitalWrite(D4, HIGH);
+    digitalWrite(D5, HIGH);
     Serial.println("solinoid and pump in stop");
   } else {
     Serial.println("Tank is Empty");
   }
 }
 
+//Need to fix
 void handleNH3Treatment() {
   // TODO: Treatment functions
   Serial.print(3);
@@ -263,13 +264,13 @@ void readNH3Value() {
 
 
 void smallTankInput(int data){
-  if (!waterLevel(D1)) {
+  if (!waterLevel(D3)) {
     // Serial.println("in if");
-    while (waterLevel(D1) == false) {
-      digitalWrite(D5, LOW);
+    while (waterLevel(D3) == false) {
+      digitalWrite(D7, LOW);
       // Serial.println("Water in start");
     }
-    digitalWrite(D5, HIGH);
+    digitalWrite(D7, HIGH);
     // Serial.println("Water in stop");
     Serial.print(data);
   } else {
