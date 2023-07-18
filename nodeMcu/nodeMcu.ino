@@ -16,9 +16,9 @@ ESP8266WebServer server(80);
 double ph_value = 6.4;
 double nh3_value = 1.234;
 
-char bioChipStatus;
-char slakelimeStatus;
-char sugarStatus;
+char bioChipStatus = '0';
+char slakelimeStatus = '0';
+char sugarStatus = '0';
 
 void keypadHandler(char data) {
   if (data == 'a') {
