@@ -81,40 +81,36 @@ void handleRoot() {
 }
 
 void handleGETRequest(String call) {
-  String ph_string = "";
-  String bioChipStatus_string = "";
-  String sugarStatus_string = "";
-  String slakelimeStatus_string = "";
-
+  String valueTxt = "";
+  String serverPath = "";
 
   if (WiFi.status() == WL_CONNECTED) {
     WiFiClient client;
     HTTPClient http;
 
-    //ph value
-    ph_string = String(ph_value, 2);
-    Serial.println(ph_string);
-    String phServerPath = serverName + call + "?ph=" + ph_string;
+    if(call=="check-ph") {
+      //ph value
+      valueTxt =  String(ph_value, 2);
+      // Serial.println(ph_string);
+      serverPath = serverName + call + "?ph=" + valueTxt;
+    } else if(call=="biochip-status") {
+      //bioChipStatus
+      valueTxt =  String(bioChipStatus);
+      // Serial.println(bioChipStatus_string);
+      serverPath = serverName + call + "?biochip=" + valueTxt;
+    } else if(call == "slakelime-status") {
+      //slakelime
+      valueTxt =  String(slakelimeStatus);
+      // Serial.println(slakelimeStatus_string);
+      serverPath = serverName + call + "?slakelime=" + valueTxt;
+    } else if(call == "sugar-status") {
+      //sugar
+      valueTxt =  String(sugarStatus);
+      // Serial.println(sugarStatus_string);
+      serverPath = serverName + call + "?sugar=" + valueTxt;
+    }
 
-    //bioChipStatus
-    bioChipStatus_string = String(bioChipStatus);
-    Serial.println(ph_string);
-    String bioChipServerPath = serverName + call + "?ph=" + bioChipStatus_string;
-
-    //slakelime
-    slakelimeStatus_string = String(slakelimeStatus);
-    Serial.println(ph_string);
-    String slakelimeServerPath = serverName + call + "?ph=" + slakelimeStatus_string;
-
-    //sugar
-    sugarStatus_string = String(sugarStatus);
-    Serial.println(ph_string);
-    String sugarServerPath = serverName + call + "?ph=" + sugarStatus_string;
-
-    http.begin(client, phServerPath.c_str());
-    http.begin(client, bioChipServerPath.c_str());
-    http.begin(client, slakelimeServerPath.c_str());
-    http.begin(client, sugarServerPath.c_str());
+    http.begin(client, serverPath.c_str());
 
     int httpResponseCode = http.GET();
 
@@ -130,10 +126,7 @@ void handleGETRequest(String call) {
 
     http.end();
 
-    server.send(200, "text/plain", ph_string);
-    server.send(200, "text/plain", bioChipStatus_string);
-    server.send(200, "text/plain", slakelimeStatus_string);
-    server.send(200, "text/plain", sugarStatus_string);
+    server.send(200, "text/plain", valueTxt);
 
   } else {
     Serial.println("WiFi disconnected");
@@ -167,6 +160,7 @@ void handleCheckPH() {
 void handleLowPHTreatment() {
   handleGETRequest("record-ph");
   // TODO: treatment functions
+  Serial.print("Low start");
   Serial.print(1);
 }
 
